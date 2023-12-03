@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org/">
+<head th:replace="~{fragments :: head}"></head>
+<body>
+    <header th:replace="~{fragments :: header}"></header>
+    <main>
+        <h1 th:text="${headingText}">Need text here</h1>
+        <p>This portal will allow you to help manage our <a href='/artworks'>collection</a> of fine art.</p>
+        <img th:src="@{/images/people-gallery.jpeg}" width="100%"/>
+    </main>
+</body>
+</html>
