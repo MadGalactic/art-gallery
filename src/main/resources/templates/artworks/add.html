@@ -6,12 +6,14 @@
     <div id="admin-bar">
         <div class="nav">
             <a class="navlink" href="/artworks">View List of Artworks</a>
+            <a class="navlink" href="/artworks/delete">Delete Artwork</a>
         </div>
     </div>
         <main>
             <h3>Add Artwork</h3>
             <form action='/artworks/add' method='POST'>
-                <input type='text' name='artwork' />
+                <label>Title <input type='text' name='title' /></label>
+                <label>Artist <input type='text' name='artist' /></label>
                 <button type='submit'>Add to Collection</button>
             </form>
         </main>

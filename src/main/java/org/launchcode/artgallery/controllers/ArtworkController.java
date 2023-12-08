@@ -1,5 +1,7 @@
 package org.launchcode.artgallery.controllers;
 
+import org.launchcode.artgallery.data.ArtworksData;
+import org.launchcode.artgallery.models.Artwork;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -13,20 +15,10 @@ import java.util.Map;
 @RequestMapping("/artworks")
 public class ArtworkController {
 
-    private static int nextId = 6;
-
-    private static final Map<Integer, String> artworks = new HashMap<>() {{
-        put(1, "Woman in Orange");
-        put(2, "Couple dining");
-        put(3, "The Red Parka");
-        put(4, "In Time");
-        put(5, "Greener Pastures");
-    }};
 
     @GetMapping("")
     public String displayArtworksHomePage(Model model){
-        List<String> artworksList = new ArrayList<>(artworks.values());
-        model.addAttribute("artworksList", artworksList);
+        model.addAttribute("artworksList", ArtworksData.getAll());
         return "artworks/index";
     }
 
@@ -36,22 +28,23 @@ public class ArtworkController {
     }
 
     @PostMapping("/add")
-    public String addArtwork(@RequestParam String artwork) {
-        artworks.put(nextId, artwork);
-        nextId++;
+    public String addArtwork(@ModelAttribute Artwork artwork) {
+        ArtworksData.add(artwork);
         return "redirect:/artworks";
     }
 
-    @GetMapping("/details/{artworkId}")
-    @ResponseBody
-    public String displayArtworkDetails(@PathVariable int artworkId){
-        return "<html>" +
-                "<body>" +
-                "<h3>Artwork</h3>" +
-                "<p><b>ID:</b>" + artworkId + "</p>" +
-                "<p><b>Name:</b>" + artworks.get(artworkId) + "</p>" +
-                "</body>" +
-                "</html>";
+    @GetMapping("/delete")
+    public String renderDeleteArtForm(Model model) {
+        model.addAttribute("artworkList", ArtworksData.getAll());
+        return "artworks/delete";
+    }
+
+    @PostMapping("/delete")
+    public String processDeleteArtForm(@RequestParam(required = false) int[] artworkIds) {
+        for (int id : artworkIds) {
+            ArtworksData.remove(id);
+        }
+        return "redirect:/artworks";
     }
 
 }
