@@ -1,34 +1,38 @@
 package org.launchcode.artgallery.models;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.util.Objects;
 
+@Entity
 public class Artwork {
 
-    private static int nextid = 1;
-
+    @Id
+    @GeneratedValue
     private int id;
     @NotBlank(message = "Title is required.")
     private String title;
    @Size(min = 2, max = 30, message ="Artist name must be 2-10 characters wrong")
     private String artist;
 
+   private String yearCreated;
+
 
    // No-arg constructor that lets the form know about the existence of the fields when the page loads, before the user submits anything
-   public Artwork() {
-       this.id = nextid;
-       nextid++;
-   }
+   public Artwork() {}
 
    @NotNull(message="Style is required")
    private Style style;
 
-    public Artwork(String title, String artist, Style style) {
+    public Artwork(String title, String artist, String yearCreated, Style style) {
         this.title = title;
         this.artist = artist;
+        this.yearCreated = yearCreated;
         this.style = style;
     }
 
@@ -50,6 +54,14 @@ public class Artwork {
 
     public int getId() {
         return id;
+    }
+
+    public String getYearCreated() {
+        return yearCreated;
+    }
+
+    public void setYearCreated(String yearCreated) {
+        this.yearCreated = yearCreated;
     }
 
     public Style getStyle() {

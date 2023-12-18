@@ -35,6 +35,11 @@
                     <p class="error" th:errors="${artwork.style}"></p>
                 </div>
 
+                <div class="form-item">
+                    <label th:for="yearCreated">Year Created</label>
+                    <input th:field="${artwork.yearCreated}" />
+                </div>
+
                 <button type='submit'>Add</button>
             </form>
         </main>
