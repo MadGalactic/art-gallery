@@ -1,20 +1,35 @@
 package org.launchcode.artgallery.models;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 import java.util.Objects;
 
 public class Artwork {
 
     private static int nextid = 1;
 
-    private final int id;
+    private int id;
+    @NotBlank(message = "Title is required.")
     private String title;
+   @Size(min = 2, max = 30, message ="Artist name must be 2-10 characters wrong")
     private String artist;
 
-    public Artwork(String title, String artist) {
-        this.id = nextid;
+
+   // No-arg constructor that lets the form know about the existence of the fields when the page loads, before the user submits anything
+   public Artwork() {
+       this.id = nextid;
+       nextid++;
+   }
+
+   @NotNull(message="Style is required")
+   private Style style;
+
+    public Artwork(String title, String artist, Style style) {
         this.title = title;
         this.artist = artist;
-        nextid++;
+        this.style = style;
     }
 
     public String getTitle() {
@@ -35,6 +50,14 @@ public class Artwork {
 
     public int getId() {
         return id;
+    }
+
+    public Style getStyle() {
+        return style;
+    }
+
+    public void setStyle(Style style) {
+        this.style = style;
     }
 
     @Override

@@ -1,9 +1,12 @@
 package org.launchcode.artgallery.controllers;
 
+import jakarta.validation.Valid;
 import org.launchcode.artgallery.data.ArtworksData;
 import org.launchcode.artgallery.models.Artwork;
+import org.launchcode.artgallery.models.Style;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -23,14 +26,22 @@ public class ArtworkController {
     }
 
     @GetMapping("/add")
-    public String displayAddArtworkForm() {
+    public String displayAddArtworkForm(Model model) {
+        model.addAttribute(new Artwork()); // lets the controller know what the model has and what its fields are
+        model.addAttribute("styles", Style.values());
         return "artworks/add";
     }
 
     @PostMapping("/add")
-    public String addArtwork(@ModelAttribute Artwork artwork) {
-        ArtworksData.add(artwork);
-        return "redirect:/artworks";
+    public String addArtwork(@ModelAttribute @Valid Artwork artwork, Errors errors, Model model) {
+        if (errors.hasErrors()) {
+            model.addAttribute("styles", Style.values());
+            return "artworks/add";
+        } else {
+            ArtworksData.add(artwork);
+            return "redirect:/artworks";
+        }
+
     }
 
     @GetMapping("/delete")
