@@ -1,39 +1,36 @@
 package org.launchcode.artgallery.models;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-import java.util.Objects;
-
 @Entity
-public class Artwork {
+public class Artwork extends AbstractEntity {
 
-    @Id
-    @GeneratedValue
-    private int id;
     @NotBlank(message = "Title is required.")
     private String title;
-   @Size(min = 2, max = 30, message ="Artist name must be 2-10 characters wrong")
-    private String artist;
 
-   private String yearCreated;
+    @ManyToOne
+    private Artist artist;
 
+    private String yearCreated;
 
-   // No-arg constructor that lets the form know about the existence of the fields when the page loads, before the user submits anything
-   public Artwork() {}
+    private String media;
 
-   @NotNull(message="Style is required")
-   private Style style;
+    private Style style;
 
-    public Artwork(String title, String artist, String yearCreated, Style style) {
+    private String imageId;
+
+    public Artwork() {}
+
+    public Artwork(String title, Artist artist, String yearCreated, String media, Style style, String imageId) {
         this.title = title;
         this.artist = artist;
         this.yearCreated = yearCreated;
+        this.media = media;
         this.style = style;
+        this.imageId = imageId;
     }
 
     public String getTitle() {
@@ -44,16 +41,12 @@ public class Artwork {
         this.title = title;
     }
 
-    public String getArtist() {
+    public Artist getArtist() {
         return artist;
     }
 
-    public void setArtist(String artist) {
+    public void setArtist(Artist artist) {
         this.artist = artist;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public String getYearCreated() {
@@ -64,6 +57,14 @@ public class Artwork {
         this.yearCreated = yearCreated;
     }
 
+    public String getMedia() {
+        return media;
+    }
+
+    public void setMedia(String media) {
+        this.media = media;
+    }
+
     public Style getStyle() {
         return style;
     }
@@ -72,21 +73,17 @@ public class Artwork {
         this.style = style;
     }
 
+    public String getImageId() {
+        return imageId;
+    }
+
+    public void setImageId(String imageId) {
+        this.imageId = imageId;
+    }
+
     @Override
     public String toString() {
-        return title + " (" + artist + ")";
+        return title + " (" + artist + ", " + yearCreated + ")";
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Artwork artwork = (Artwork) o;
-        return id == artwork.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
 }

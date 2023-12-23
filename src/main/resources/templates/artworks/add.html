@@ -19,8 +19,15 @@
                 </div>
                 <div class="form-item">
                     <label th:for="artist">Artist</label>
-                    <input th:field=${artwork.artist} />
-                    <p class="error" th:errors="${artwork.artist}"></p>
+                    <select th:field="${artwork.artist}">
+                        <!-- Using artist for th:text implicitly calls toString -->
+                        <!-- Can call artist.id because this is now coming from its own class with a unique id -->
+                        <option value=""></option>
+                        <option th:each="artist : ${artists}"
+                                th:value="${artist.id}"
+                                th:text="${artist}"
+                        ></option>
+                    </select>
                 </div>
 
                 <div class="form-item">
@@ -40,6 +47,14 @@
                     <input th:field="${artwork.yearCreated}" />
                 </div>
 
+                <div class="form-item">
+                    <label th:for="media">Media</label>
+                    <input th:field="${artwork.media}" />
+                </div>
+                <div class="form-item">
+                    <label th:for="imageId">Image ID</label>
+                    <input th:field="${artwork.imageId}" />
+                </div>
                 <button type='submit'>Add</button>
             </form>
         </main>
