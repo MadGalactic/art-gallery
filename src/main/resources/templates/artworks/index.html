@@ -11,10 +11,10 @@
     </div>
     <main>
         <h2>ARTWORKS</h2>
-        <p th:unless="${artworksList} and ${artworksList.size()}">
+        <p th:unless="${artworks} and ${artworks.size()}">
             <em>No artwork to display</em>
         </p>
-        <th:block th:if="${artworksList} and ${artworksList.size()}">
+        <th:block th:if="${artworks} and ${artworks.size()}">
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -22,21 +22,17 @@
                         <th>Title</th>
                         <th>Artist</th>
                         <th>Year Created</th>
-                        <th>Media</th>
-                        <th>Style</th>
                         <th>Image</th>
                     </tr>
                 </thead>
-                <tr th:each="artwork: ${artworksList}">
+                <tr th:each="artwork: ${artworks}">
                     <td th:text="${artwork.id}"></td>
-                    <td th:text="${artwork.title}"></td>
+                    <td><a th:href="${'/artworks/details/' + artwork.id}" th:text="${artwork.title}"></a></td>
                     <td th:text="${artwork.artist}"></td>
-                    <td th:text="${artwork.yearCreated}"></td>
-                    <td th:text="${artwork.media}"></td>
-                    <td th:text="${artwork.style.displayName}"></td>
+                    <td th:text="${artwork.details.yearCreated}"></td>
                     <td>
-                        <a th:href="${'https://drive.google.com/uc?export=view&id=' + artwork.imageId}" target="_blank">
-                            <img th:src="${'https://drive.google.com/uc?export=view&id=' + artwork.imageId}" width="50px" />
+                        <a th:href="${'artworks/details/' + artwork.id}">
+                            <img th:src="${'https://drive.google.com/uc?export=view&id=' + artwork.details.imageId}" width="50px" />
                         </a>
                     </td>
                 </tr>

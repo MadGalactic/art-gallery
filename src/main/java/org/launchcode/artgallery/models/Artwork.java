@@ -1,9 +1,11 @@
 package org.launchcode.artgallery.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+
+import java.util.List;
 
 @Entity
 public class Artwork extends AbstractEntity {
@@ -13,24 +15,20 @@ public class Artwork extends AbstractEntity {
 
     @ManyToOne
     private Artist artist;
+    @ManyToMany
+    private List<Style> styles;
 
-    private String yearCreated;
-
-    private String media;
-
-    private Style style;
-
-    private String imageId;
+    @OneToOne(cascade = CascadeType.ALL)
+    @Valid
+    private ArtworkDetails details;
 
     public Artwork() {}
 
-    public Artwork(String title, Artist artist, String yearCreated, String media, Style style, String imageId) {
+    public Artwork(String title, Artist artist, List<Style> styles, ArtworkDetails details) {
         this.title = title;
         this.artist = artist;
-        this.yearCreated = yearCreated;
-        this.media = media;
-        this.style = style;
-        this.imageId = imageId;
+        this.styles = styles;
+        this.details = details;
     }
 
     public String getTitle() {
@@ -49,41 +47,37 @@ public class Artwork extends AbstractEntity {
         this.artist = artist;
     }
 
-    public String getYearCreated() {
-        return yearCreated;
+    public List<Style> getStyles() {
+        return styles;
     }
 
-    public void setYearCreated(String yearCreated) {
-        this.yearCreated = yearCreated;
+    public void setStyles(List<Style> styles) {
+        this.styles = styles;
     }
 
-    public String getMedia() {
-        return media;
+    public ArtworkDetails getDetails() {
+        return details;
     }
 
-    public void setMedia(String media) {
-        this.media = media;
-    }
-
-    public Style getStyle() {
-        return style;
-    }
-
-    public void setStyle(Style style) {
-        this.style = style;
-    }
-
-    public String getImageId() {
-        return imageId;
-    }
-
-    public void setImageId(String imageId) {
-        this.imageId = imageId;
+    public void setDetails(ArtworkDetails details) {
+        this.details = details;
     }
 
     @Override
     public String toString() {
-        return title + " (" + artist + ", " + yearCreated + ")";
+        return title + " (" + artist + ", " + details.getYearCreated() + ")";
     }
 
+
+    // format the styles so they display well on the page
+    public String getFormattedStyles(){
+        StringBuilder styleNames = new StringBuilder("");
+        for (int i=0; i < styles.size(); i++){
+            styleNames.append(styles.get(i).getName());
+            if (i < styles.size() -1) {
+                styleNames.append(", ");
+            }
+        }
+        return styleNames.toString();
+    }
 }

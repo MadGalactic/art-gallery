@@ -1,18 +1,17 @@
 package org.launchcode.artgallery.controllers;
 
-import jakarta.validation.Valid;
 import org.launchcode.artgallery.data.ArtistRepository;
 import org.launchcode.artgallery.data.ArtworkRepository;
-import org.launchcode.artgallery.data.ArtworksData;
-import org.launchcode.artgallery.models.Artist;
-import org.launchcode.artgallery.models.Artwork;
-import org.launchcode.artgallery.models.Style;
+import org.launchcode.artgallery.data.StyleRepository;
+import org.launchcode.artgallery.models.*;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -25,43 +24,78 @@ public class ArtworkController {
     @Autowired
     private ArtistRepository artistRepository;
 
+    @Autowired
+    private StyleRepository styleRepository;
+
+    // Corresponds to http://localhost:8080/artworks
     @GetMapping("")
-    public String displayArtworksHomePage(@RequestParam(required = false) Integer artistId, Model model){
+    public String renderArtworksPage(@RequestParam(required = false) Integer artistId,
+                                     @RequestParam(required = false) Integer styleId,
+                                     Model model) {
         if (artistId != null) {
             Optional<Artist> result = artistRepository.findById(artistId);
             if (result.isPresent()) {
                 Artist artist = result.get();
                 model.addAttribute("artworks", artist.getArtworks());
             }
-        } else{
-            model.addAttribute("artworksList", artworkRepository.findAll());
+        } else if (styleId != null) {
+            Optional<Style> result = styleRepository.findById(styleId);
+            if (result.isPresent()) {
+                Style style = result.get();
+                model.addAttribute("artworks", style.getArtworks());
+            }
+        } else {
+            model.addAttribute("artworks", artworkRepository.findAll());
         }
         return "artworks/index";
     }
 
+    // Corresponds to http://localhost:8080/artworks/details/1
+    @GetMapping("/details/{artworkId}")
+    public String renderArtworkDetailsPage(@PathVariable int artworkId, Model model) {
+        Optional<Artwork> result = artworkRepository.findById(artworkId);
+        if (result.isPresent()) {
+            Artwork artwork = result.get();
+            model.addAttribute("artwork", artwork);
+            return "artworks/details";
+        } else {
+            return "artworks/index";
+        }
+    }
+
+    // Corresponds to http://localhost:8080/artworks/add
     @GetMapping("/add")
-    public String displayAddArtworkForm(Model model) {
-        model.addAttribute(new Artwork());
-        model.addAttribute("artists", artistRepository.findAll());// lets the controller know what the model has and what its fields are
-        model.addAttribute("styles", Style.values());
+    public String renderAddArtForm(Model model) {
+        List<Artist> artists = (List<Artist>) artistRepository.findAll();
+        artists.sort(new ArtistComparator());
+        List<Style> styles = (List<Style>) styleRepository.findAll();
+        styles.sort(new StyleComparator());
+        model.addAttribute("artwork", new Artwork());
+        model.addAttribute("artists", artists);
+        model.addAttribute("styles", styles);
         return "artworks/add";
     }
 
     @PostMapping("/add")
-    public String addArtwork(@ModelAttribute @Valid Artwork artwork, Errors errors, Model model) {
+    public String processAddArtForm(@ModelAttribute @Valid Artwork artwork, Errors errors, @RequestParam(required = false) List<Integer> styleIds, Model model) {
         if (errors.hasErrors()) {
-            model.addAttribute("styles", Style.values());
+            model.addAttribute("artists", artistRepository.findAll());
+            model.addAttribute("styles", styleRepository.findAll());
             return "artworks/add";
         } else {
+            if (styleIds != null) {
+                List<Style> selectedStyles = (List<Style>) styleRepository.findAllById(styleIds);
+                artwork.setStyles(selectedStyles);
+            }
             artworkRepository.save(artwork);
             return "redirect:/artworks";
         }
-
     }
 
+    // Corresponds to http://localhost:8080/artworks/delete
     @GetMapping("/delete")
     public String renderDeleteArtForm(Model model) {
-        model.addAttribute("artworkList", artworkRepository.findAll());
+        model.addAttribute("artworks", artworkRepository.findAll());
         return "artworks/delete";
     }
 

@@ -3,11 +3,14 @@ package org.launchcode.artgallery.controllers;
 import org.launchcode.artgallery.data.ArtistRepository;
 import org.launchcode.artgallery.models.Artist;
 import jakarta.validation.Valid;
+import org.launchcode.artgallery.models.ArtistComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/artists")
@@ -19,7 +22,9 @@ public class ArtistController {
     // Corresponds to http://localhost:8080/artists
     @GetMapping
     public String displayArtistsPage(Model model) {
-        model.addAttribute("artists", artistRepository.findAll());
+        List<Artist> artists = (List<Artist>) artistRepository.findAll();
+        artists.sort(new ArtistComparator());
+        model.addAttribute("artists", artists);
         return "/artists/index";
     }
 

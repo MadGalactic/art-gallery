@@ -1,21 +1,36 @@
 package org.launchcode.artgallery.models;
 
-public enum Style {
 
-    ART_NOUVEAU("Art Nouveau"),
-    BAROQUE("Baroque"),
-    IMPRESSIONISM("Impressionism"),
-    POINTILLISM("Pointillism"),
-    RENAISSANCE("Renaissance"),
-    SURREALISM("Surrealism");
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToMany;
+import jakarta.validation.constraints.NotBlank;
 
-    private final String displayName;
+import java.util.ArrayList;
+import java.util.List;
 
-    Style(String displayName) {
-        this.displayName = displayName;
+@Entity
+public class Style extends AbstractEntity {
+
+    @NotBlank(message = "Name of style is required.")
+    private String name;
+    @ManyToMany (mappedBy = "styles")
+    private List<Artwork> artworks = new ArrayList<>();
+
+    public Style() {}
+
+    public Style(String name) {
+        this.name = name;
     }
 
-    public String getDisplayName() {
-        return displayName;
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public List<Artwork> getArtworks() {
+        return artworks;
     }
 }
